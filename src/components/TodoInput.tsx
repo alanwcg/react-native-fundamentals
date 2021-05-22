@@ -5,9 +5,10 @@ import checkIcon from '../assets/icons/Check.png';
 
 interface TodoInputProps {
   addTask: (task: string) => void;
+  darkTheme: boolean;
 }
 
-export function TodoInput({ addTask }: TodoInputProps) {
+export function TodoInput({ darkTheme, addTask }: TodoInputProps) {
   const [task, setTask] = useState('');
 
   function handleAddNewTask() {
@@ -16,10 +17,21 @@ export function TodoInput({ addTask }: TodoInputProps) {
   }
 
   return (
-    <View style={[styles.inputContainer, Platform.OS === 'ios' ? styles.inputIOSShadow : styles.inputAndroidShadow]}>
+    <View 
+      style={
+        darkTheme
+        ? [styles.inputContainer, { backgroundColor: '#212136' }, Platform.OS === 'ios' ? styles.inputIOSShadow : styles.inputAndroidShadow]
+        : [styles.inputContainer, Platform.OS === 'ios' ? styles.inputIOSShadow : styles.inputAndroidShadow]
+      }
+    >
       <TextInput 
-        style={styles.input} 
+        style={
+          darkTheme
+          ? [styles.input, { backgroundColor: '#212136', color: '#FFF'  }]
+          : styles.input
+        } 
         placeholder="Adicionar novo todo..."
+        placeholderTextColor={ darkTheme ? '#E1E1E6': '#3D3D4D' }
         returnKeyType="send"
         value={task}
         onChangeText={setTask}
@@ -28,7 +40,11 @@ export function TodoInput({ addTask }: TodoInputProps) {
       <TouchableOpacity
         testID="add-new-task-button"
         activeOpacity={0.7}
-        style={styles.addButton}
+        style={
+          darkTheme
+          ? [styles.addButton, { backgroundColor: '#565BFF' }]
+          : styles.addButton
+        }
         onPress={handleAddNewTask}
       >
         <Image source={checkIcon} />
@@ -49,6 +65,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    color: '#000',
     backgroundColor: '#F5F4F8',
     paddingLeft: 12,
     borderTopLeftRadius: 5,

@@ -1,15 +1,46 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Text, StyleSheet, FlatListProps } from 'react-native';
 
-function FlatListHeaderComponent() {
+interface FlatListHeaderComponentProps {
+  darkTheme: boolean;
+  toggleTheme: () => void;
+}
+
+function FlatListHeaderComponent({
+  darkTheme,
+  toggleTheme,
+}: FlatListHeaderComponentProps) {
   return (
-    <View>
-      <Text style={styles.header}>Minhas tasks</Text>
+    <View style={styles.headerContainer}>
+      <Text style={
+        darkTheme
+          ? [styles.header, { color: '#565BFF' }]
+          : styles.header}
+      >
+        Minhas tasks
+      </Text>
+      <TouchableOpacity
+        style={
+          darkTheme
+            ? [styles.headerButton, { backgroundColor: '#FFF' }]
+            : styles.headerButton}
+        activeOpacity={0.7}
+        onPress={toggleTheme}
+      >
+        <Text style={
+          darkTheme
+            ? [styles.buttonText, { color: '#565BFF' }]
+            : styles.buttonText}
+        >
+          {darkTheme ? 'Tema Claro' : 'Tema Escuro'}
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }
 
 interface MyTasksListProps {
+  darkTheme: boolean;
   tasks: {
     id: number;
     title: string;
@@ -17,50 +48,118 @@ interface MyTasksListProps {
   }[];
   onPress: (id: number) => void;
   onLongPress: (id: number) => void;
+  toggleTheme: () => void;
 }
 
-export function MyTasksList({ tasks, onLongPress, onPress }: MyTasksListProps) {
+export function MyTasksList({
+  darkTheme,
+  tasks,
+  onLongPress,
+  onPress,
+  toggleTheme,
+}: MyTasksListProps) {
   return (
     <FlatList
       data={tasks}
       keyExtractor={item => String(item.id)}
       renderItem={({ item, index }) => {
         return (
-          <TouchableOpacity
-            testID={`button-${index}`}
-            activeOpacity={0.7}
-            style={item.done ? styles.taskButtonDone : styles.taskButton}
-            onPress={() => onPress(item.id)}
-            onLongPress={() => onLongPress(item.id)}
-          >
-            <View 
-              testID={`marker-${index}`}
-              style={item.done ? styles.taskMarkerDone: styles.taskMarker}
-            />
-            <Text 
-              style={item.done ? styles.taskTextDone: styles.taskText}
-            >
-              {item.title}
-            </Text>
-          </TouchableOpacity>
+          <>
+            {item.done ? (
+              <TouchableOpacity
+                testID={`button-${index}`}
+                activeOpacity={0.7}
+                style={
+                  darkTheme
+                  ? [styles.taskButtonDone, { backgroundColor: '#212136' }]
+                  : styles.taskButtonDone
+                }
+                onPress={() => onPress(item.id)}
+                onLongPress={() => onLongPress(item.id)}
+              >
+                <View
+                  testID={`marker-${index}`}
+                  style={
+                    darkTheme
+                    ? [styles.taskMarkerDone, { backgroundColor: '#565BFF' }]
+                    : styles.taskMarkerDone
+                  }
+                />
+                <Text
+                  style={
+                    darkTheme
+                    ? [styles.taskTextDone, { color: '#E1E1E6A2' }]
+                    : styles.taskTextDone
+                  }
+                >
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                testID={`button-${index}`}
+                activeOpacity={0.7}
+                style={styles.taskButton}
+                onPress={() => onPress(item.id)}
+                onLongPress={() => onLongPress(item.id)}
+              >
+                <View
+                  testID={`marker-${index}`}
+                  style={
+                    darkTheme
+                    ? [styles.taskMarker, { borderColor: '#565BFF' }]
+                    : styles.taskMarker
+                  }
+                />
+                <Text
+                  style={
+                    darkTheme
+                    ? [styles.taskText, { color: '#E1E1E6' }]
+                    : styles.taskText
+                  }
+                >
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </>
         )
       }}
-      ListHeaderComponent={<FlatListHeaderComponent />}
+      ListHeaderComponent={
+        <FlatListHeaderComponent
+          darkTheme={darkTheme}
+          toggleTheme={toggleTheme}
+        />
+      }
       ListHeaderComponentStyle={{
-        marginBottom: 20
+        marginBottom: 20,
       }}
       style={{
         marginHorizontal: 24,
-        marginTop: 32
+        marginTop: 32,
       }}
     />
   )
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   header: {
     color: '#3D3D4D',
     fontSize: 24,
+    fontFamily: 'Poppins-SemiBold'
+  },
+  headerButton: {
+    backgroundColor: '#273FAD',
+    padding: 8,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: '#FFF',
     fontFamily: 'Poppins-SemiBold'
   },
   taskButton: {
@@ -103,5 +202,5 @@ const styles = StyleSheet.create({
   taskTextDone: {
     color: '#A09CB1',
     textDecorationLine: 'line-through'
-  }
+  },
 })
